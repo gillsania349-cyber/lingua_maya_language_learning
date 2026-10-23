@@ -2,10 +2,10 @@
 
 import { useEffect, useState, type FormEvent } from "react"
 import { useI18n } from "@/components/i18n-provider"
-import { whatsappLink } from "@/lib/site"
+import { site } from "@/lib/site"
 
 const fieldClass =
-  "mt-2 w-full rounded-2xl border border-transparent bg-background px-4 py-3.5 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+  "mt-2 w-full rounded-2xl border border-input bg-background px-4 py-3.5 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
 
 export function ContactForm() {
   const { locale, t } = useI18n()
@@ -26,7 +26,7 @@ export function ContactForm() {
     const message = String(data.get("message") || "").trim()
 
     const lines = [
-      form.whatsappIntro,
+      form.emailIntro,
       "",
       `${form.name}: ${name}`,
       `${form.email}: ${email}`,
@@ -37,7 +37,10 @@ export function ContactForm() {
       message,
     ].filter(Boolean)
 
-    window.open(whatsappLink(lines.join("\n")), "_blank", "noopener,noreferrer")
+    const subject = encodeURIComponent(`${form.cardTitle} — ${name}`)
+    const body = encodeURIComponent(lines.join("\n"))
+    window.location.href = `mailto:${site.email}?subject=${subject}&body=${body}`
+
     setStatus("sent")
     e.currentTarget.reset()
     setInterest(form.interestOptions[0])
@@ -88,7 +91,6 @@ export function ContactForm() {
           <input
             name="phone"
             type="tel"
-            required
             inputMode="tel"
             autoComplete="tel"
             placeholder={form.phonePlaceholder}

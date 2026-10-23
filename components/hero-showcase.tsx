@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { ArrowUpRight, CalendarCheck, PlayCircle, Video } from 'lucide-react'
+import { BookLessonButton } from '@/components/auth-provider'
 import { useI18n } from '@/components/i18n-provider'
-import { site } from '@/lib/site'
 
 type LanguageId = 'maya' | 'english' | 'spanish'
 
@@ -139,12 +139,7 @@ export function HeroShowcase() {
 
       <div className="flex flex-col gap-6">
         <p className="text-pretty text-center text-muted-foreground md:text-left">{copy.tagline}</p>
-        <a
-          href={site.bookingUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group block rounded-3xl bg-primary p-4 transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
+        <BookLessonButton className="group block w-full rounded-3xl bg-primary p-4 text-left transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
           <div className="rounded-2xl bg-background p-5">
             <div className="flex items-center justify-between gap-2">
               <p className="font-semibold">{copy.availability}</p>
@@ -181,10 +176,9 @@ export function HeroShowcase() {
                 className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                 aria-hidden="true"
               />
-              <span className="sr-only">{copy.opensNewTab}</span>
             </span>
           </div>
-        </a>
+        </BookLessonButton>
       </div>
     </div>
   )

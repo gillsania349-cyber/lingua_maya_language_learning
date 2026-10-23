@@ -3,10 +3,11 @@
 import Image from "next/image";
 import { Mail } from "lucide-react";
 import { BrandIcon } from "@/components/brand-icon";
+import { BookLessonButton } from "@/components/auth-provider";
 import { ContactForm } from "@/components/contact-form";
 import { SectionHeading } from "@/components/languages";
 import { useI18n } from "@/components/i18n-provider";
-import { site, whatsappLink } from "@/lib/site";
+import { site } from "@/lib/site";
 
 export function About() {
   const { t } = useI18n();
@@ -45,12 +46,9 @@ export function About() {
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <a
-            href="/#book"
-            className="rounded-full bg-foreground px-7 py-3.5 text-sm font-semibold text-background transition-opacity hover:opacity-85"
-          >
+          <BookLessonButton className="rounded-full bg-foreground px-7 py-3.5 text-sm font-semibold text-background transition-opacity hover:opacity-85">
             {t.hero.ctaBook}
-          </a>
+          </BookLessonButton>
           <a
             href="/contact"
             className="rounded-full border border-foreground px-7 py-3.5 text-sm font-semibold transition-colors hover:bg-foreground hover:text-background"
@@ -107,36 +105,18 @@ export function Contact() {
 
         <div className="flex flex-col gap-4">
           <a
-            href={whatsappLink(copy.whatsappMessage)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between gap-4 rounded-[1.75rem] bg-whatsapp p-6 text-foreground transition-transform hover:-translate-y-0.5"
+            href={`mailto:${site.email}`}
+            className="flex items-center justify-between gap-4 rounded-[1.75rem] bg-primary p-6 text-primary-foreground transition-transform hover:-translate-y-0.5"
           >
             <span className="flex items-center gap-4">
-              <BrandIcon name="whatsapp" className="size-9" />
+              <Mail className="size-8" aria-hidden="true" />
               <span>
-                <span className="block text-xl font-semibold">
-                  {copy.whatsappTitle}
-                </span>
-                <span className="text-sm opacity-80">
-                  {copy.whatsappSubtitle}
-                </span>
+                <span className="block text-xl font-semibold">{copy.emailTitle}</span>
+                <span className="text-sm opacity-85">{site.email}</span>
               </span>
             </span>
             <span aria-hidden="true" className="text-2xl">
               →
-            </span>
-          </a>
-          <a
-            href={`mailto:${site.email}`}
-            className="flex items-center gap-4 rounded-[1.75rem] bg-muted p-6 transition-colors hover:bg-accent"
-          >
-            <Mail className="size-6 text-primary" aria-hidden="true" />
-            <span>
-              <span className="block font-semibold">{copy.email}</span>
-              <span className="text-sm text-muted-foreground">
-                {site.email}
-              </span>
             </span>
           </a>
           <div className="rounded-[1.75rem] bg-muted p-5">

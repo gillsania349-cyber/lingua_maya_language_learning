@@ -1,5 +1,6 @@
 'use client'
 
+import { BookLessonButton } from '@/components/auth-provider'
 import { HeroShowcase } from './hero-showcase'
 import { useI18n } from '@/components/i18n-provider'
 
@@ -22,12 +23,9 @@ export function Hero() {
         </h1>
         <p className="mx-auto mt-6 max-w-xl text-pretty text-lg text-muted-foreground">{t.hero.description}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <a
-            href="#book"
-            className="rounded-full bg-foreground px-7 py-3.5 font-semibold text-background transition-opacity hover:opacity-85"
-          >
+          <BookLessonButton className="rounded-full bg-foreground px-7 py-3.5 font-semibold text-background transition-opacity hover:opacity-85">
             {t.hero.ctaBook}
-          </a>
+          </BookLessonButton>
           <a
             href="#materials"
             className="rounded-full border border-foreground px-7 py-3.5 font-semibold transition-colors hover:bg-foreground hover:text-background"
