@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react"
+import { useRouter } from "next/navigation"
 import {
   clearSession,
   getSessionUser,
@@ -23,6 +24,7 @@ type AuthMode = "login" | "signup"
 
 type AuthContextValue = {
   user: PublicUser | null
+  ready: boolean
   openBookFlow: () => void
   openLogin: () => void
   openSignup: () => void
@@ -32,6 +34,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const router = useRouter()
   const [user, setUser] = useState<PublicUser | null>(null)
   const [authOpen, setAuthOpen] = useState(false)
   const [authMode, setAuthMode] = useState<AuthMode>("signup")
@@ -72,14 +75,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     (next: PublicUser) => {
       setUser(next)
       setAuthOpen(false)
-      if (continueBooking) setBookingOpen(true)
+      if (continueBooking) {
+        setBookingOpen(true)
+      } else {
+        router.push("/profile")
+      }
     },
-    [continueBooking],
+    [continueBooking, router],
   )
 
   const value = useMemo(
-    () => ({ user, openBookFlow, openLogin, openSignup, logout }),
-    [user, openBookFlow, openLogin, openSignup, logout],
+    () => ({ user, ready, openBookFlow, openLogin, openSignup, logout }),
+    [user, ready, openBookFlow, openLogin, openSignup, logout],
   )
 
   return (

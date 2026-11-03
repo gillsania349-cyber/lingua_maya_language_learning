@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react"
 import { useI18n } from "@/components/i18n-provider"
+import { saveMessage } from "@/lib/admin"
 import { site } from "@/lib/site"
 
 const fieldClass =
@@ -36,6 +37,14 @@ export function ContactForm() {
       `${form.message}:`,
       message,
     ].filter(Boolean)
+
+    saveMessage({
+      name,
+      email,
+      phone,
+      interest,
+      message,
+    })
 
     const subject = encodeURIComponent(`${form.cardTitle} — ${name}`)
     const body = encodeURIComponent(lines.join("\n"))

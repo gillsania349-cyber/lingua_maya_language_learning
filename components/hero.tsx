@@ -27,7 +27,7 @@ export function Hero() {
             {t.hero.ctaBook}
           </BookLessonButton>
           <a
-            href="#materials"
+            href="#learn"
             className="rounded-full border border-foreground px-7 py-3.5 font-semibold transition-colors hover:bg-foreground hover:text-background"
           >
             {t.hero.ctaMaterials}

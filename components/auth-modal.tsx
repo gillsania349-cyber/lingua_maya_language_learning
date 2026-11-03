@@ -3,9 +3,12 @@
 import { useEffect, useState, type FormEvent } from "react"
 import { KeyRound, X } from "lucide-react"
 import { useI18n } from "@/components/i18n-provider"
+import { PasswordInput } from "@/components/password-input"
 import {
   completeLogin,
+  findUserByEmail,
   generateAuthCode,
+  resetUserPassword,
   type PublicUser,
 } from "@/lib/auth"
 
@@ -15,6 +18,8 @@ const fieldClass =
 type AuthResult =
   | { ok: true; user: PublicUser }
   | { ok: false; error: string }
+
+type AuthMode = "login" | "signup" | "otp" | "forgot" | "reset-otp" | "reset"
 
 type Props = {
   open: boolean
@@ -39,18 +44,22 @@ export function AuthModal({
 }: Props) {
   const { t } = useI18n()
   const a = t.auth
-  const [mode, setMode] = useState<"login" | "signup" | "otp">(
+  const [mode, setMode] = useState<AuthMode>(
     initialMode === "login" ? "login" : "signup",
   )
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
   const [pendingUser, setPendingUser] = useState<PublicUser | null>(null)
+  const [resetEmail, setResetEmail] = useState("")
   const [authCode, setAuthCode] = useState("")
 
   useEffect(() => {
     if (!open) return
     setMode(initialMode)
     setError("")
+    setSuccess("")
     setPendingUser(null)
+    setResetEmail("")
     setAuthCode("")
   }, [open, initialMode])
 
@@ -62,11 +71,22 @@ export function AuthModal({
     setPendingUser(user)
     setMode("otp")
     setError("")
+    setSuccess("")
+  }
+
+  function startResetOtp(email: string) {
+    const code = generateAuthCode()
+    setAuthCode(code)
+    setResetEmail(email)
+    setMode("reset-otp")
+    setError("")
+    setSuccess("")
   }
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError("")
+    setSuccess("")
     const data = new FormData(e.currentTarget)
 
     if (mode === "otp") {
@@ -77,6 +97,53 @@ export function AuthModal({
       }
       completeLogin(pendingUser)
       onSuccess(pendingUser)
+      return
+    }
+
+    if (mode === "forgot") {
+      const email = String(data.get("email") || "")
+      const result = findUserByEmail(email)
+      if (!result.ok) {
+        setError(a.errors.notfound)
+        return
+      }
+      startResetOtp(result.user.email)
+      return
+    }
+
+    if (mode === "reset-otp") {
+      const code = String(data.get("code") || "").trim()
+      if (code !== authCode) {
+        setError(a.errors.code)
+        return
+      }
+      setMode("reset")
+      setError("")
+      return
+    }
+
+    if (mode === "reset") {
+      const password = String(data.get("password") || "")
+      const confirm = String(data.get("confirmPassword") || "")
+      if (password.length < 6) {
+        setError(a.errors.invalid)
+        return
+      }
+      if (password !== confirm) {
+        setError(a.errors.mismatch)
+        return
+      }
+      const result = resetUserPassword({ email: resetEmail, password })
+      if (!result.ok) {
+        setError(
+          result.error === "notfound" ? a.errors.notfound : a.errors.invalid,
+        )
+        return
+      }
+      setMode("login")
+      setSuccess(a.resetSuccess)
+      setAuthCode("")
+      setResetEmail("")
       return
     }
 
@@ -105,11 +172,17 @@ export function AuthModal({
   }
 
   const title =
-    mode === "otp"
+    mode === "otp" || mode === "reset-otp"
       ? a.codeTitle
-      : mode === "signup"
-        ? a.signupTitle
-        : a.loginTitle
+      : mode === "forgot"
+        ? a.forgotTitle
+        : mode === "reset"
+          ? a.resetTitle
+          : mode === "signup"
+            ? a.signupTitle
+            : a.loginTitle
+
+  const showTabs = mode === "login" || mode === "signup"
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -144,7 +217,7 @@ export function AuthModal({
           </button>
         </div>
 
-        {mode !== "otp" && (
+        {showTabs && (
           <div className="px-6 pt-5">
             <div className="grid grid-cols-2 gap-2 rounded-full bg-muted p-1">
               <button
@@ -152,6 +225,7 @@ export function AuthModal({
                 onClick={() => {
                   setMode("signup")
                   setError("")
+                  setSuccess("")
                 }}
                 className={`rounded-full py-2 text-sm font-semibold transition ${
                   mode === "signup"
@@ -166,6 +240,7 @@ export function AuthModal({
                 onClick={() => {
                   setMode("login")
                   setError("")
+                  setSuccess("")
                 }}
                 className={`rounded-full py-2 text-sm font-semibold transition ${
                   mode === "login"
@@ -180,7 +255,7 @@ export function AuthModal({
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4 px-6 py-6">
-          {mode === "otp" ? (
+          {mode === "otp" || mode === "reset-otp" ? (
             <>
               <div className="flex items-start gap-3 rounded-2xl bg-primary/10 p-4 text-sm text-primary">
                 <KeyRound className="mt-0.5 size-5 shrink-0" />
@@ -206,6 +281,52 @@ export function AuthModal({
                   autoFocus
                   placeholder="000000"
                   className={`${fieldClass} tracking-[0.35em]`}
+                />
+              </label>
+            </>
+          ) : mode === "forgot" ? (
+            <>
+              <p className="text-sm text-muted-foreground">
+                {a.forgotDescription}
+              </p>
+              <label className="block text-sm font-medium">
+                {a.email}
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  defaultValue={resetEmail}
+                  placeholder={a.emailPlaceholder}
+                  className={fieldClass}
+                />
+              </label>
+            </>
+          ) : mode === "reset" ? (
+            <>
+              <p className="text-sm text-muted-foreground">
+                {a.resetDescription}
+              </p>
+              <label className="block text-sm font-medium">
+                {a.password}
+                <PasswordInput
+                  name="password"
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                  placeholder={a.passwordPlaceholder}
+                  inputClassName={fieldClass}
+                />
+              </label>
+              <label className="block text-sm font-medium">
+                {a.confirmPassword}
+                <PasswordInput
+                  name="confirmPassword"
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                  placeholder={a.confirmPasswordPlaceholder}
+                  inputClassName={fieldClass}
                 />
               </label>
             </>
@@ -241,23 +362,41 @@ export function AuthModal({
 
               <label className="block text-sm font-medium">
                 {a.password}
-                <input
+                <PasswordInput
                   name="password"
-                  type="password"
                   required
                   minLength={6}
                   autoComplete={
                     mode === "signup" ? "new-password" : "current-password"
                   }
                   placeholder={a.passwordPlaceholder}
-                  className={fieldClass}
+                  inputClassName={fieldClass}
                 />
               </label>
+
+              {mode === "login" && (
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("forgot")
+                      setError("")
+                      setSuccess("")
+                    }}
+                    className="text-sm font-medium text-primary hover:underline"
+                  >
+                    {a.forgotPassword}
+                  </button>
+                </div>
+              )}
             </>
           )}
 
           {error ? (
             <p className="text-sm font-medium text-destructive">{error}</p>
+          ) : null}
+          {success ? (
+            <p className="text-sm font-medium text-primary">{success}</p>
           ) : null}
 
           <button
@@ -266,10 +405,31 @@ export function AuthModal({
           >
             {mode === "otp"
               ? a.codeSubmit
-              : mode === "signup"
-                ? a.signupSubmit
-                : a.loginSubmit}
+              : mode === "reset-otp"
+                ? a.codeSubmit
+                : mode === "forgot"
+                  ? a.forgotSubmit
+                  : mode === "reset"
+                    ? a.resetSubmit
+                    : mode === "signup"
+                      ? a.signupSubmit
+                      : a.loginSubmit}
           </button>
+
+          {(mode === "forgot" || mode === "reset" || mode === "reset-otp") && (
+            <button
+              type="button"
+              onClick={() => {
+                setMode("login")
+                setError("")
+                setSuccess("")
+                setAuthCode("")
+              }}
+              className="w-full text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              {a.backToLogin}
+            </button>
+          )}
         </form>
       </div>
     </div>

@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { X } from "lucide-react"
 import { BookingForm } from "@/components/booking-form"
 import { useI18n } from "@/components/i18n-provider"
@@ -16,6 +17,11 @@ export function BookingModal({
 }) {
   const { t } = useI18n()
   const copy = t.booking
+  const [success, setSuccess] = useState(false)
+
+  useEffect(() => {
+    if (!open) setSuccess(false)
+  }, [open])
 
   if (!open) return null
 
@@ -31,22 +37,23 @@ export function BookingModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="booking-modal-title"
-        className="relative z-10 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[1.75rem] border border-border bg-background shadow-2xl"
+        className="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-[1.75rem] border border-border bg-background shadow-2xl"
       >
-        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-border bg-background/95 px-6 py-5 backdrop-blur md:px-8">
+        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-border px-6 py-5 md:px-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-              {copy.eyebrow}
+              {success ? copy.success.eyebrow : copy.eyebrow}
             </p>
             <h2
               id="booking-modal-title"
               className="mt-1 text-2xl font-semibold tracking-tight"
             >
-              {copy.title}
+              {success ? copy.success.title : copy.title}
             </h2>
-            {user ? (
+            {!success && user ? (
               <p className="mt-1 text-sm text-muted-foreground">
-                {t.auth.loggedInAs} <span className="font-medium text-foreground">{user.name}</span>
+                {t.auth.loggedInAs}{" "}
+                <span className="font-medium text-foreground">{user.name}</span>
               </p>
             ) : null}
           </div>
@@ -60,8 +67,12 @@ export function BookingModal({
           </button>
         </div>
 
-        <div className="px-6 py-6 md:px-8 md:pb-8">
-          <BookingForm user={user} onDone={onClose} />
+        <div className="soft-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-6 md:px-8 md:pb-8">
+          <BookingForm
+            user={user}
+            onDone={onClose}
+            onSuccessChange={setSuccess}
+          />
         </div>
       </div>
     </div>

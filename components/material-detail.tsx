@@ -26,7 +26,7 @@ export function MaterialDetail({ id }: { id: MaterialId }) {
   return (
     <article className="mx-auto max-w-3xl">
       <Link
-        href="/#materials"
+        href="/#learn"
         className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />

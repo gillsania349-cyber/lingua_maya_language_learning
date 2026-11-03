@@ -25,6 +25,16 @@ function writeUsers(users: AuthUser[]) {
   window.localStorage.setItem(USERS_KEY, JSON.stringify(users))
 }
 
+export function listUsers(): PublicUser[] {
+  return readUsers().map(({ id, name, email }) => ({ id, name, email }))
+}
+
+export function deleteUserById(id: string) {
+  writeUsers(readUsers().filter((u) => u.id !== id))
+  const session = getSessionUser()
+  if (session?.id === id) clearSession()
+}
+
 export function getSessionUser(): PublicUser | null {
   try {
     const raw = window.localStorage.getItem(SESSION_KEY)
@@ -105,4 +115,33 @@ export function generateAuthCode() {
 
 export function completeLogin(user: PublicUser) {
   setSessionUser(user)
+}
+
+export function findUserByEmail(
+  email: string,
+): { ok: true; user: PublicUser } | { ok: false; error: string } {
+  const normalized = email.trim().toLowerCase()
+  const found = readUsers().find((u) => u.email === normalized)
+  if (!found) return { ok: false, error: 'notfound' }
+  return {
+    ok: true,
+    user: { id: found.id, name: found.name, email: found.email },
+  }
+}
+
+export function resetUserPassword(input: {
+  email: string
+  password: string
+}): { ok: true } | { ok: false; error: string } {
+  const email = input.email.trim().toLowerCase()
+  const password = input.password
+  if (!email || password.length < 6) return { ok: false, error: 'invalid' }
+
+  const users = readUsers()
+  const index = users.findIndex((u) => u.email === email)
+  if (index < 0) return { ok: false, error: 'notfound' }
+
+  users[index] = { ...users[index], password }
+  writeUsers(users)
+  return { ok: true }
 }

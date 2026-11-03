@@ -1,6 +1,7 @@
 "use client";
 
-import { LogIn, LogOut, UserPlus } from "lucide-react";
+import Link from "next/link";
+import { UserRound } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { useI18n } from "@/components/i18n-provider";
@@ -8,16 +9,15 @@ import { site } from "@/lib/site";
 
 const navItems = [
   { key: "languages", href: "/#languages" },
-  { key: "book", href: "book" },
-  { key: "practice", href: "/#practice" },
-  { key: "materials", href: "/#materials" },
+  { key: "learn", href: "/#learn" },
   { key: "about", href: "/about" },
   { key: "contact", href: "/contact" },
 ] as const;
 
 export function SiteHeader() {
   const { t } = useI18n();
-  const { user, logout, openBookFlow, openLogin, openSignup } = useAuth();
+  const { user, openLogin } = useAuth();
+  const initial = user?.name?.trim().charAt(0).toUpperCase() || "";
 
   return (
     <header className="flex items-center justify-between gap-3">
@@ -38,22 +38,12 @@ export function SiteHeader() {
         <ul className="flex items-center">
           {navItems.map((item) => (
             <li key={item.key}>
-              {item.key === "book" ? (
-                <button
-                  type="button"
-                  onClick={openBookFlow}
-                  className="block rounded-full px-4 py-2 text-sm font-medium transition-colors hover:bg-background"
-                >
-                  {t.header.nav[item.key]}
-                </button>
-              ) : (
-                <a
-                  href={item.href}
-                  className="block rounded-full px-4 py-2 text-sm font-medium transition-colors hover:bg-background"
-                >
-                  {t.header.nav[item.key]}
-                </a>
-              )}
+              <a
+                href={item.href}
+                className="block rounded-full px-4 py-2 text-sm font-medium transition-colors hover:bg-background"
+              >
+                {t.header.nav[item.key]}
+              </a>
             </li>
           ))}
         </ul>
@@ -62,33 +52,22 @@ export function SiteHeader() {
       <div className="flex items-center gap-2">
         <LanguageSwitcher />
         {user ? (
+          <Link
+            href="/profile"
+            aria-label={t.auth.profile.eyebrow}
+            className="grid size-10 place-items-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+          >
+            {initial || <UserRound className="size-5" aria-hidden="true" />}
+          </Link>
+        ) : (
           <button
             type="button"
-            onClick={logout}
-            className="inline-flex items-center gap-2 rounded-full border border-foreground px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-foreground hover:text-background"
+            onClick={openLogin}
+            aria-label={t.auth.accountButton}
+            className="grid size-10 place-items-center rounded-full border border-foreground text-foreground transition-colors hover:bg-foreground hover:text-background"
           >
-            <LogOut className="size-4" aria-hidden="true" />
-            <span className="hidden sm:inline">{t.auth.logout}</span>
+            <UserRound className="size-5" aria-hidden="true" />
           </button>
-        ) : (
-          <>
-            <button
-              type="button"
-              onClick={openLogin}
-              className="inline-flex items-center gap-2 rounded-full border border-foreground px-3.5 py-2.5 text-sm font-semibold transition-colors hover:bg-foreground hover:text-background sm:px-5"
-            >
-              <LogIn className="size-4" aria-hidden="true" />
-              <span>{t.auth.loginTab}</span>
-            </button>
-            <button
-              type="button"
-              onClick={openSignup}
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-3.5 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-85 sm:px-5"
-            >
-              <UserPlus className="size-4" aria-hidden="true" />
-              <span>{t.auth.signupTab}</span>
-            </button>
-          </>
         )}
       </div>
     </header>

@@ -9,9 +9,7 @@ import { site, whatsappLink } from '@/lib/site'
 const footerLinks = [
   { key: 'home', href: '/' },
   { key: 'languages', href: '/#languages' },
-  { key: 'book', href: 'book' },
-  { key: 'practice', href: '/#practice' },
-  { key: 'materials', href: '/#materials' },
+  { key: 'learn', href: '/#learn' },
   { key: 'about', href: '/about' },
   { key: 'contact', href: '/contact' },
 ] as const
@@ -80,22 +78,12 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2.5">
             {footerLinks.map((item) => (
               <li key={item.key}>
-                {item.key === 'book' ? (
-                  <button
-                    type="button"
-                    onClick={openBookFlow}
-                    className="font-medium text-foreground/80 transition-colors hover:text-primary"
-                  >
-                    {f.links[item.key]}
-                  </button>
-                ) : (
-                  <a
-                    href={item.href}
-                    className="font-medium text-foreground/80 transition-colors hover:text-primary"
-                  >
-                    {f.links[item.key]}
-                  </a>
-                )}
+                <a
+                  href={item.href}
+                  className="font-medium text-foreground/80 transition-colors hover:text-primary"
+                >
+                  {f.links[item.key]}
+                </a>
               </li>
             ))}
           </ul>
@@ -147,7 +135,12 @@ export function SiteFooter() {
           © {new Date().getFullYear()} {site.name} · {f.madeBy}{' '}
           <span className="font-medium text-foreground">{site.teacher}</span>
         </p>
-        <p className="text-xs md:text-sm">{f.rights}</p>
+        <div className="flex items-center gap-4 text-xs md:text-sm">
+          <p>{f.rights}</p>
+          <a href="/admin/login" className="font-medium hover:text-foreground">
+            Admin
+          </a>
+        </div>
       </div>
     </footer>
   )
