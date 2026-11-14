@@ -1,13 +1,15 @@
 "use client"
 
 import { useEffect, useState, type FormEvent } from "react"
-import { KeyRound, X } from "lucide-react"
+import { KeyRound, Loader2, X } from "lucide-react"
 import { useI18n } from "@/components/i18n-provider"
 import { PasswordInput } from "@/components/password-input"
+import { useRouter } from "next/navigation"
+import { adminLogin } from "@/lib/admin"
 import {
+  cancelPendingAuth,
   completeLogin,
   findUserByEmail,
-  generateAuthCode,
   resetUserPassword,
   type PublicUser,
 } from "@/lib/auth"
@@ -17,7 +19,7 @@ const fieldClass =
 
 type AuthResult =
   | { ok: true; user: PublicUser }
-  | { ok: false; error: string }
+  | { ok: false; error: string; message?: string }
 
 type AuthMode = "login" | "signup" | "otp" | "forgot" | "reset-otp" | "reset"
 
@@ -26,12 +28,47 @@ type Props = {
   initialMode?: "login" | "signup"
   onClose: () => void
   onSuccess: (user: PublicUser) => void
-  verifyLogin: (input: { email: string; password: string }) => AuthResult
+  verifyLogin: (
+    input: { email: string; password: string },
+  ) => Promise<AuthResult>
   signup: (input: {
     name: string
     email: string
     password: string
-  }) => AuthResult
+  }) => Promise<AuthResult>
+}
+
+async function requestOtp(input: {
+  email: string
+  name?: string
+  purpose: "signup" | "login" | "reset"
+}) {
+  const res = await fetch("/api/auth/send-otp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  })
+  const data = (await res.json()) as {
+    ok: boolean
+    challenge?: string
+    message?: string
+    error?: string
+  }
+  return { status: res.status, ...data }
+}
+
+async function confirmOtp(input: {
+  email: string
+  code: string
+  challenge: string
+}) {
+  const res = await fetch("/api/auth/verify-otp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  })
+  const data = (await res.json()) as { ok: boolean; error?: string }
+  return { status: res.status, ...data }
 }
 
 export function AuthModal({
@@ -43,6 +80,7 @@ export function AuthModal({
   signup,
 }: Props) {
   const { t } = useI18n()
+  const router = useRouter()
   const a = t.auth
   const [mode, setMode] = useState<AuthMode>(
     initialMode === "login" ? "login" : "signup",
@@ -51,7 +89,9 @@ export function AuthModal({
   const [success, setSuccess] = useState("")
   const [pendingUser, setPendingUser] = useState<PublicUser | null>(null)
   const [resetEmail, setResetEmail] = useState("")
-  const [authCode, setAuthCode] = useState("")
+  const [challenge, setChallenge] = useState("")
+  const [otpEmail, setOtpEmail] = useState("")
+  const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     if (!open) return
@@ -60,30 +100,63 @@ export function AuthModal({
     setSuccess("")
     setPendingUser(null)
     setResetEmail("")
-    setAuthCode("")
+    setChallenge("")
+    setOtpEmail("")
+    setBusy(false)
   }, [open, initialMode])
 
   if (!open) return null
 
-  function startOtp(user: PublicUser) {
-    const code = generateAuthCode()
-    setAuthCode(code)
-    setPendingUser(user)
-    setMode("otp")
+  async function startOtp(
+    user: PublicUser,
+    purpose: "signup" | "login",
+  ) {
+    setBusy(true)
     setError("")
     setSuccess("")
+    try {
+      const result = await requestOtp({
+        email: user.email,
+        name: user.name,
+        purpose,
+      })
+      if (!result.ok || !result.challenge) {
+        setError(result.message || a.errors.emailSend)
+        return
+      }
+      setChallenge(result.challenge)
+      setOtpEmail(user.email)
+      setPendingUser(user)
+      setMode("otp")
+    } catch {
+      setError(a.errors.emailSend)
+    } finally {
+      setBusy(false)
+    }
   }
 
-  function startResetOtp(email: string) {
-    const code = generateAuthCode()
-    setAuthCode(code)
-    setResetEmail(email)
-    setMode("reset-otp")
+  async function startResetOtp(email: string) {
+    setBusy(true)
     setError("")
     setSuccess("")
+    try {
+      const result = await requestOtp({ email, purpose: "reset" })
+      if (!result.ok || !result.challenge) {
+        setError(result.message || a.errors.emailSend)
+        return
+      }
+      setChallenge(result.challenge)
+      setOtpEmail(email)
+      setResetEmail(email)
+      setMode("reset-otp")
+    } catch {
+      setError(a.errors.emailSend)
+    } finally {
+      setBusy(false)
+    }
   }
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError("")
     setSuccess("")
@@ -91,34 +164,70 @@ export function AuthModal({
 
     if (mode === "otp") {
       const code = String(data.get("code") || "").trim()
-      if (!pendingUser || code !== authCode) {
+      if (!pendingUser || !challenge) {
         setError(a.errors.code)
         return
       }
-      completeLogin(pendingUser)
-      onSuccess(pendingUser)
+      setBusy(true)
+      try {
+        const result = await confirmOtp({
+          email: pendingUser.email,
+          code,
+          challenge,
+        })
+        if (!result.ok) {
+          setError(
+            result.error === "expired" ? a.errors.codeExpired : a.errors.code,
+          )
+          return
+        }
+        await completeLogin(pendingUser)
+        onSuccess(pendingUser)
+      } catch {
+        setError(a.errors.code)
+      } finally {
+        setBusy(false)
+      }
       return
     }
 
     if (mode === "forgot") {
       const email = String(data.get("email") || "")
-      const result = findUserByEmail(email)
+      const result = await findUserByEmail(email)
       if (!result.ok) {
         setError(a.errors.notfound)
         return
       }
-      startResetOtp(result.user.email)
+      await startResetOtp(result.user.email)
       return
     }
 
     if (mode === "reset-otp") {
       const code = String(data.get("code") || "").trim()
-      if (code !== authCode) {
+      if (!challenge || !otpEmail) {
         setError(a.errors.code)
         return
       }
-      setMode("reset")
-      setError("")
+      setBusy(true)
+      try {
+        const result = await confirmOtp({
+          email: otpEmail,
+          code,
+          challenge,
+        })
+        if (!result.ok) {
+          setError(
+            result.error === "expired" ? a.errors.codeExpired : a.errors.code,
+          )
+          return
+        }
+        setMode("reset")
+        setError("")
+      } catch {
+        setError(a.errors.code)
+      } finally {
+        setBusy(false)
+      }
       return
     }
 
@@ -133,7 +242,10 @@ export function AuthModal({
         setError(a.errors.mismatch)
         return
       }
-      const result = resetUserPassword({ email: resetEmail, password })
+      const result = await resetUserPassword({
+        email: resetEmail,
+        password,
+      })
       if (!result.ok) {
         setError(
           result.error === "notfound" ? a.errors.notfound : a.errors.invalid,
@@ -142,7 +254,7 @@ export function AuthModal({
       }
       setMode("login")
       setSuccess(a.resetSuccess)
-      setAuthCode("")
+      setChallenge("")
       setResetEmail("")
       return
     }
@@ -152,23 +264,41 @@ export function AuthModal({
 
     if (mode === "signup") {
       const name = String(data.get("name") || "")
-      const result = signup({ name, email, password })
-      if (!result.ok) {
-        setError(
-          result.error === "exists" ? a.errors.exists : a.errors.invalid,
-        )
-        return
+      setBusy(true)
+      try {
+        const result = await signup({ name, email, password })
+        if (!result.ok) {
+          setError(
+            result.error === "exists"
+              ? a.errors.exists
+              : result.message || a.errors.invalid,
+          )
+          return
+        }
+        await startOtp(result.user, "signup")
+      } finally {
+        setBusy(false)
       }
-      startOtp(result.user)
       return
     }
 
-    const result = verifyLogin({ email, password })
-    if (!result.ok) {
-      setError(a.errors.credentials)
+    if (adminLogin(email, password)) {
+      onClose()
+      router.push("/admin")
       return
     }
-    startOtp(result.user)
+
+    setBusy(true)
+    try {
+      const result = await verifyLogin({ email, password })
+      if (!result.ok) {
+        setError(a.errors.credentials)
+        return
+      }
+      await startOtp(result.user, "login")
+    } finally {
+      setBusy(false)
+    }
   }
 
   const title =
@@ -190,7 +320,10 @@ export function AuthModal({
         type="button"
         aria-label={a.close}
         className="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={() => {
+          void cancelPendingAuth()
+          onClose()
+        }}
       />
       <div
         role="dialog"
@@ -209,7 +342,10 @@ export function AuthModal({
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              void cancelPendingAuth()
+              onClose()
+            }}
             className="grid size-9 place-items-center rounded-full hover:bg-muted"
             aria-label={a.close}
           >
@@ -263,9 +399,7 @@ export function AuthModal({
                   <p className="font-semibold">{a.codeSent}</p>
                   <p className="mt-1 opacity-90">
                     {a.codeHint}{" "}
-                    <span className="font-mono text-base font-bold tracking-[0.2em]">
-                      {authCode}
-                    </span>
+                    <span className="font-medium">{otpEmail}</span>
                   </p>
                 </div>
               </div>
@@ -401,8 +535,10 @@ export function AuthModal({
 
           <button
             type="submit"
-            className="w-full rounded-full bg-foreground py-3.5 text-sm font-semibold text-background transition hover:opacity-90"
+            disabled={busy}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground py-3.5 text-sm font-semibold text-background transition hover:opacity-90 disabled:opacity-60"
           >
+            {busy ? <Loader2 className="size-4 animate-spin" /> : null}
             {mode === "otp"
               ? a.codeSubmit
               : mode === "reset-otp"
@@ -423,7 +559,7 @@ export function AuthModal({
                 setMode("login")
                 setError("")
                 setSuccess("")
-                setAuthCode("")
+                setChallenge("")
               }}
               className="w-full text-sm font-medium text-muted-foreground hover:text-foreground"
             >

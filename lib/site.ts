@@ -3,7 +3,7 @@ export const site = {
   teacher: 'Martha A. Zelada',
   // Replace with the real number in international format, digits only (e.g. 502 + number).
   whatsappNumber: '50200000000',
-  email: 'hello@linguamaya.com',
+  email: 'learnonlinegt@gmail.com',
   // Placeholder booking calendar — replace with the real Calendly / Google Calendar link.
   bookingUrl: 'https://calendly.com/linguamaya/lesson',
   socials: [

@@ -2,19 +2,22 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowUpRight, BookOpen, FileText, Layers, Headphones } from 'lucide-react'
+import { ArrowUpRight, BookOpen, FileText, Layers, Lock, MessagesSquare } from 'lucide-react'
 import { SectionHeading } from '@/components/languages'
 import { useI18n } from '@/components/i18n-provider'
+import { useAuth } from '@/components/auth-provider'
+import { isPremiumMaterial } from '@/lib/materials'
 
 const materials = [
   { id: 'mayaWorkbook', slug: 'maya-workbook', icon: BookOpen },
   { id: 'chapinPhrasebook', slug: 'chapin-phrasebook', icon: FileText },
   { id: 'flashcards', slug: 'flashcards', icon: Layers },
-  { id: 'englishPack', slug: 'english-pack', icon: Headphones },
+  { id: 'englishPack', slug: 'speaking-club', icon: MessagesSquare },
 ] as const
 
 export function Materials() {
   const { t } = useI18n()
+  const { plan } = useAuth()
   const copy = t.materials
 
   return (
@@ -46,8 +49,22 @@ export function Materials() {
                   href={`/materials/${slug}`}
                   className="flex h-full flex-col rounded-3xl bg-muted p-6 transition hover:-translate-y-0.5 hover:bg-accent focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30"
                 >
-                  <span className="grid size-11 place-items-center rounded-xl bg-background text-primary">
-                    <Icon className="size-5" aria-hidden="true" />
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="grid size-11 place-items-center rounded-xl bg-background text-primary">
+                      <Icon className="size-5" aria-hidden="true" />
+                    </span>
+                    {isPremiumMaterial(id) && (
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[0.7rem] font-semibold ${
+                              plan === "premium"
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-foreground text-background"
+                            }`}
+                          >
+                            <Lock className="size-3" aria-hidden="true" />
+                            {plan === "premium" ? copy.premium.unlocked : copy.premium.badge}
+                          </span>
+                        )}
                   </span>
                   <h3 className="mt-6 text-xl font-semibold">{item.name}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{item.format}</p>

@@ -11,10 +11,12 @@ import {
 } from "react"
 import { useRouter } from "next/navigation"
 import {
-  clearSession,
   getSessionUser,
+  getUserPlan,
+  logoutUser,
   signupUser,
   verifyLoginCredentials,
+  type Plan,
   type PublicUser,
 } from "@/lib/auth"
 import { AuthModal } from "@/components/auth-modal"
@@ -24,6 +26,8 @@ type AuthMode = "login" | "signup"
 
 type AuthContextValue = {
   user: PublicUser | null
+  /** null while loading or when logged out */
+  plan: Plan | null
   ready: boolean
   openBookFlow: () => void
   openLogin: () => void
@@ -41,6 +45,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [continueBooking, setContinueBooking] = useState(false)
   const [bookingOpen, setBookingOpen] = useState(false)
   const [ready, setReady] = useState(false)
+  const [plan, setPlan] = useState<Plan | null>(null)
+
+  useEffect(() => {
+    if (!user) {
+      setPlan(null)
+      return
+    }
+    let cancelled = false
+    void getUserPlan(user.id).then((p) => {
+      if (!cancelled) setPlan(p)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [user])
 
   useEffect(() => {
     setUser(getSessionUser())
@@ -67,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const openSignup = useCallback(() => openAuth("signup", false), [openAuth])
 
   const logout = useCallback(() => {
-    clearSession()
+    void logoutUser()
     setUser(null)
   }, [])
 
@@ -85,8 +104,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 
   const value = useMemo(
-    () => ({ user, ready, openBookFlow, openLogin, openSignup, logout }),
-    [user, ready, openBookFlow, openLogin, openSignup, logout],
+    () => ({ user, plan, ready, openBookFlow, openLogin, openSignup, logout }),
+    [user, plan, ready, openBookFlow, openLogin, openSignup, logout],
   )
 
   return (

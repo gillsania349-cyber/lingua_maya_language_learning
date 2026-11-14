@@ -3,6 +3,7 @@
 .vercel/
 
 # Environment variables
+.env
 .env*.local
 
 # Common ignores
@@ -12,3 +13,5 @@ node_modules
 AGENTS.md
 CLAUDE.md
 .cursor/
+# TypeScript build cache
+*.tsbuildinfo

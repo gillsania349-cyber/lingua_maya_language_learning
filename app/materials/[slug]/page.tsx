@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter, WhatsAppFloat } from "@/components/site-footer"
 import { MaterialDetail } from "@/components/material-detail"
@@ -18,6 +18,8 @@ export default async function MaterialPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
+  // Old link from before the English pack became the Speaking Club.
+  if (slug === "english-pack") redirect("/materials/speaking-club")
   if (!isMaterialSlug(slug)) notFound()
 
   const id = materialIdBySlug[slug]

@@ -138,7 +138,7 @@ export const en = {
     forgotPassword: "Forgot password?",
     forgotTitle: "Reset your password",
     forgotDescription:
-      "Enter the email for your account. We’ll show a verification code so you can set a new password.",
+      "Enter the email for your account. We’ll email a verification code so you can set a new password.",
     forgotSubmit: "Send reset code",
     resetTitle: "Choose a new password",
     resetDescription: "Enter a new password for your account.",
@@ -152,8 +152,8 @@ export const en = {
     bookGateHint: "You’ll sign up or log in first, then fill the booking form.",
     logout: "Log out",
     codeTitle: "Enter verification code",
-    codeSent: "Verification code required",
-    codeHint: "Enter the 6-digit code. Demo code:",
+    codeSent: "Check your email",
+    codeHint: "We sent a 6-digit code to",
     codeLabel: "Authentication code",
     codeSubmit: "Verify & continue",
     errors: {
@@ -161,6 +161,8 @@ export const en = {
       exists: "An account with this email already exists. Try logging in.",
       credentials: "Incorrect email or password.",
       code: "Incorrect code. Please try again.",
+      codeExpired: "That code expired. Please request a new one.",
+      emailSend: "Could not send the verification email. Please try again.",
       notfound: "No account found with that email.",
       mismatch: "Passwords do not match.",
     },
@@ -388,9 +390,22 @@ export const en = {
       mayaWorkbook: { name: "Maya starter workbook", format: "Printed or PDF" },
       chapinPhrasebook: { name: "Chapín Spanish phrasebook", format: "PDF" },
       flashcards: { name: "Vocabulary flashcard sets", format: "Printed" },
-      englishPack: { name: "English conversation pack", format: "PDF + audio" },
+      englishPack: { name: "Speaking Club", format: "Premium · Live conversation" },
     },
     order: "View details",
+    premium: {
+      badge: "Premium",
+      unlocked: "Unlocked",
+      lockedTitle: "Speaking Club is for Premium members",
+      lockedGuest:
+        "Contact Martha to join — she'll send you everything you need. Already a member? Log in to unlock it.",
+      lockedFree:
+        "You're on the free plan. Contact Martha to join the Speaking Club — she'll send you everything you need.",
+      perks: ["Weekly live sessions", "Small groups", "Feedback from Martha"],
+      contactCta: "Contact us",
+      loginCta: "Log in",
+      joinCta: "Join the next session",
+    },
     orderMessage: (name: string, format: string) =>
       `Hi Martha! I'd like to order: ${name} (${format}).`,
     back: "Back to learn",
@@ -398,6 +413,36 @@ export const en = {
     idealFor: "Ideal for",
     howItWorks: "How ordering works",
     orderCta: "Order by email",
+    cards: {
+      eyebrow: "Sample cards",
+      title: "Take a look inside",
+      decks: {
+        alphabet: {
+          name: "Spanish alphabet",
+          description:
+            "27 illustrated letter cards, from abeja to zarigüeya — including the Ñ. Tap a card to see it up close.",
+        },
+        body: {
+          name: "Body parts in Maya Tz'utujil",
+          description:
+            "24 picture cards for the parts of the body. Pick a language, then tap a card to flip it and see the other two.",
+        },
+        glyphs: {
+          name: "Maya glyphs",
+          description:
+            "Mayan language names written in hieroglyphs, sound by sound — plus Martha's own name. Letters in brackets aren't written by a glyph.",
+        },
+      },
+      mayanLanguage: "Mayan language",
+      teacherName: "Your teacher's name",
+      tapToFlip: "Tap to flip",
+      showWordsIn: "Show words in",
+      meaning: "Meaning",
+      close: "Close",
+      previous: "Previous card",
+      next: "Next card",
+      cardOf: (n: number, total: number) => `Card ${n} of ${total}`,
+    },
     details: {
       mayaWorkbook: {
         intro:
@@ -464,23 +509,23 @@ export const en = {
       },
       englishPack: {
         intro:
-          "A conversation pack with PDF lessons and audio so you can practice real English speaking and listening at home.",
+          "A live, friendly conversation club where you practice speaking with other learners — guided by Martha, with real topics and instant feedback.",
         includes: [
-          "Guided conversation scripts",
-          "Listening audio for each unit",
-          "Useful phrases for work and travel",
-          "Pronunciation notes and shadowing tips",
-          "Self-check questions after each lesson",
+          "Weekly live speaking sessions online",
+          "Small groups so everyone gets to talk",
+          "Conversation topics and useful phrases before each session",
+          "Pronunciation tips and personal feedback",
+          "Session recordings and notes to review",
         ],
         idealFor: [
-          "Guatemalan learners building spoken English",
+          "Learners who want to speak with confidence",
           "Students preparing for interviews or travel",
-          "Anyone who wants listening + speaking practice",
+          "Anyone who wants regular speaking practice",
         ],
         steps: [
-          "Email me to order the English conversation pack",
-          "I send payment details and download links",
-          "Practice with PDF + audio between lessons",
+          "Send a message to join the next session",
+          "Martha sends you the schedule and the meeting link",
+          "Join live, speak, and get feedback every week",
         ],
       },
     },
@@ -522,9 +567,16 @@ export const en = {
       interestOptions: ["English", "Spanish"],
       message: "Message",
       messagePlaceholder: "Tell me what you would like to learn or ask…",
-      submit: "Send by email",
-      hint: "Opens your email app with the message ready to send.",
-      success: "Email app opened — send the message to finish.",
+      submit: "Send message",
+      sending: "Sending…",
+      hint: "Your message goes straight to Martha. She'll reply to your email.",
+      success: "Thank you! Your message was sent — Martha will reply to your email soon.",
+      error: "Sorry, the message couldn't be sent. Please try again or write on WhatsApp.",
+      popupTitle: "Message sent!",
+      popupText:
+        "Thank you for reaching out. Your message has been delivered — Martha will contact you by email.",
+      popupBadge: "Reply within 24 hours",
+      popupClose: "Got it",
       emailIntro: "Hi Martha! New contact form message from the website:",
     },
   },

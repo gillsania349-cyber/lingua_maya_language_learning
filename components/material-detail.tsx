@@ -1,16 +1,27 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowLeft, BookOpen, FileText, Headphones, Layers, Mail } from "lucide-react"
+import {
+  ArrowLeft,
+  BookOpen,
+  Crown,
+  FileText,
+  Layers,
+  Loader2,
+  Lock,
+  Mail,
+  MessagesSquare,
+} from "lucide-react"
+import { useAuth } from "@/components/auth-provider"
 import { useI18n } from "@/components/i18n-provider"
-import { site } from "@/lib/site"
-import type { MaterialId } from "@/lib/materials"
+import { MaterialCards } from "@/components/material-cards"
+import { isPremiumMaterial, materialIdBySlug, type MaterialId } from "@/lib/materials"
 
 const icons = {
   mayaWorkbook: BookOpen,
   chapinPhrasebook: FileText,
   flashcards: Layers,
-  englishPack: Headphones,
+  englishPack: MessagesSquare,
 } as const
 
 export function MaterialDetail({ id }: { id: MaterialId }) {
@@ -19,12 +30,15 @@ export function MaterialDetail({ id }: { id: MaterialId }) {
   const item = copy.items[id]
   const detail = copy.details[id]
   const Icon = icons[id]
-  const mailHref = `mailto:${site.email}?subject=${encodeURIComponent(
-    copy.orderMessage(item.name, item.format),
-  )}&body=${encodeURIComponent(copy.orderMessage(item.name, item.format))}`
+  const slug = Object.entries(materialIdBySlug).find(([, v]) => v === id)?.[0]
+  const contactHref = `/contact?material=${slug ?? ""}#contact`
+  const { user, plan, ready, openLogin } = useAuth()
+  const premiumOnly = isPremiumMaterial(id)
+  const checking = premiumOnly && (!ready || (user !== null && plan === null))
+  const locked = premiumOnly && !checking && plan !== "premium"
 
   return (
-    <article className="mx-auto max-w-3xl">
+    <article className="mx-auto max-w-4xl">
       <Link
         href="/#learn"
         className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
@@ -35,9 +49,21 @@ export function MaterialDetail({ id }: { id: MaterialId }) {
 
       <div className="mt-8 overflow-hidden rounded-[2rem] border border-border bg-background shadow-[0_20px_50px_-28px_rgba(80,40,140,0.3)]">
         <div className="bg-primary px-6 py-8 text-primary-foreground md:px-10 md:py-10">
-          <span className="grid size-12 place-items-center rounded-2xl bg-background/15">
-            <Icon className="size-6" aria-hidden="true" />
-          </span>
+          <div className="flex items-center justify-between gap-3">
+            <span className="grid size-12 place-items-center rounded-2xl bg-background/15">
+              <Icon className="size-6" aria-hidden="true" />
+            </span>
+            {premiumOnly && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-background/15 px-3 py-1.5 text-xs font-semibold">
+                {locked ? (
+                  <Lock className="size-3.5" aria-hidden="true" />
+                ) : (
+                  <Crown className="size-3.5" aria-hidden="true" />
+                )}
+                {locked ? copy.premium.badge : copy.premium.unlocked}
+              </span>
+            )}
+          </div>
           <p className="mt-5 text-sm font-semibold uppercase tracking-widest opacity-80">
             {copy.eyebrow}
           </p>
@@ -66,6 +92,53 @@ export function MaterialDetail({ id }: { id: MaterialId }) {
             </ul>
           </section>
 
+          {checking ? (
+            <div className="grid place-items-center py-10 text-muted-foreground">
+              <Loader2 className="size-6 animate-spin" aria-label="Loading" />
+            </div>
+          ) : locked ? (
+            <section className="relative overflow-hidden rounded-[1.75rem] border border-primary/25 bg-gradient-to-br from-primary/10 via-secondary/40 to-background p-6 text-center md:p-10">
+              <span className="mx-auto grid size-14 place-items-center rounded-full bg-foreground text-background shadow-lg">
+                <Lock className="size-6" aria-hidden="true" />
+              </span>
+              <h2 className="mt-5 text-2xl font-medium tracking-tight">
+                {copy.premium.lockedTitle}
+              </h2>
+              <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+                {user ? copy.premium.lockedFree : copy.premium.lockedGuest}
+              </p>
+              <ul className="mx-auto mt-6 flex max-w-lg flex-wrap justify-center gap-2">
+                {copy.premium.perks.map((perk) => (
+                  <li
+                    key={perk}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-background px-3 py-1.5 text-xs font-semibold shadow-sm ring-1 ring-border"
+                  >
+                    <Crown className="size-3.5 text-primary" aria-hidden="true" />
+                    {perk}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+                <Link
+                  href={contactHref}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-7 py-3.5 text-sm font-semibold text-background transition hover:opacity-90"
+                >
+                  <Mail className="size-4" aria-hidden="true" />
+                  {copy.premium.contactCta}
+                </Link>
+                {!user && (
+                  <button
+                    type="button"
+                    onClick={openLogin}
+                    className="inline-flex items-center justify-center rounded-full border border-foreground px-7 py-3.5 text-sm font-semibold transition hover:bg-foreground hover:text-background"
+                  >
+                    {copy.premium.loginCta}
+                  </button>
+                )}
+              </div>
+            </section>
+          ) : (
+          <>
           <section>
             <h2 className="text-lg font-semibold">{copy.idealFor}</h2>
             <ul className="mt-4 flex flex-wrap gap-2">
@@ -94,13 +167,17 @@ export function MaterialDetail({ id }: { id: MaterialId }) {
             </ol>
           </section>
 
-          <a
-            href={mailHref}
+          <MaterialCards id={id} />
+
+          <Link
+            href={contactHref}
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-7 py-4 font-semibold text-background transition hover:opacity-90 sm:w-auto"
           >
             <Mail className="size-5" aria-hidden="true" />
-            {copy.orderCta}
-          </a>
+            {premiumOnly ? copy.premium.joinCta : copy.orderCta}
+          </Link>
+          </>
+          )}
         </div>
       </div>
     </article>

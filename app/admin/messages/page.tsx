@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Trash2 } from "lucide-react"
+import { Reply, Trash2 } from "lucide-react"
 import { AdminShell } from "@/components/admin/admin-shell"
 import {
   deleteMessage,
@@ -63,6 +63,25 @@ export default function AdminMessagesPage() {
                 {new Date(m.createdAt).toLocaleString()}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
+                <a
+                  href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+                    m.email,
+                  )}&su=${encodeURIComponent(
+                    "Re: your message to Lingua Maya",
+                  )}&body=${encodeURIComponent(
+                    `Hi ${m.name},\n\n\n\n— Martha\n\n> ${m.message.split("\n").join("\n> ")}`,
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    updateMessageStatus(m.id, "read")
+                    refresh()
+                  }}
+                  className="inline-flex items-center gap-1 rounded-full bg-foreground px-3 py-1.5 text-xs font-semibold text-background hover:opacity-85"
+                >
+                  <Reply className="size-3.5" />
+                  Reply
+                </a>
                 <button
                   type="button"
                   onClick={() => {

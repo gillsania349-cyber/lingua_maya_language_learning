@@ -17,15 +17,18 @@ export default function AdminDashboardPage() {
   })
 
   useEffect(() => {
-    const bookings = listBookings()
-    const messages = listMessages()
-    setStats({
-      users: listUsers().length,
-      bookings: bookings.length,
-      newBookings: bookings.filter((b) => b.status === "new").length,
-      messages: messages.length,
-      newMessages: messages.filter((m) => m.status === "new").length,
-    })
+    void (async () => {
+      const bookings = listBookings()
+      const messages = listMessages()
+      const users = await listUsers()
+      setStats({
+        users: users.length,
+        bookings: bookings.length,
+        newBookings: bookings.filter((b) => b.status === "new").length,
+        messages: messages.length,
+        newMessages: messages.filter((m) => m.status === "new").length,
+      })
+    })()
   }, [])
 
   const cards = [

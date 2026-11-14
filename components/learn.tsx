@@ -7,13 +7,16 @@ import {
   BookOpen,
   ClipboardList,
   FileText,
-  Headphones,
+  Lock,
+  MessagesSquare,
   Layers,
   ListTodo,
   Sparkles,
 } from "lucide-react"
 import { SectionHeading } from "@/components/languages"
 import { useI18n } from "@/components/i18n-provider"
+import { useAuth } from "@/components/auth-provider"
+import { isPremiumMaterial } from "@/lib/materials"
 
 const practiceCards = [
   {
@@ -40,11 +43,12 @@ const materialCards = [
   { id: "mayaWorkbook" as const, slug: "maya-workbook", icon: BookOpen },
   { id: "chapinPhrasebook" as const, slug: "chapin-phrasebook", icon: FileText },
   { id: "flashcards" as const, slug: "flashcards", icon: Layers },
-  { id: "englishPack" as const, slug: "english-pack", icon: Headphones },
+  { id: "englishPack" as const, slug: "speaking-club", icon: MessagesSquare },
 ]
 
 export function Learn() {
   const { t } = useI18n()
+  const { plan } = useAuth()
   const learn = t.learn
   const practice = t.practice
   const materials = t.materials
@@ -175,8 +179,22 @@ export function Learn() {
                         <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary">
                           <Icon className="size-5" aria-hidden="true" />
                         </span>
+                        <span className="flex items-center gap-2">
+                        {isPremiumMaterial(id) && (
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[0.7rem] font-semibold ${
+                              plan === "premium"
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-foreground text-background"
+                            }`}
+                          >
+                            <Lock className="size-3" aria-hidden="true" />
+                            {plan === "premium" ? materials.premium.unlocked : materials.premium.badge}
+                          </span>
+                        )}
                         <span className="font-mono text-xs font-semibold text-primary/60">
                           {String(index + 1).padStart(2, "0")}
+                        </span>
                         </span>
                       </div>
                       <h4 className="mt-5 text-lg font-semibold leading-snug">

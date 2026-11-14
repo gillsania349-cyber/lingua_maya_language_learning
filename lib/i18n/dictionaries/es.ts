@@ -142,7 +142,7 @@ export const es: Dictionary = {
     forgotPassword: "¿Olvidaste tu contraseña?",
     forgotTitle: "Restablece tu contraseña",
     forgotDescription:
-      "Escribe el correo de tu cuenta. Te mostraremos un código de verificación para crear una nueva contraseña.",
+      "Escribe el correo de tu cuenta. Te enviaremos un código de verificación para crear una nueva contraseña.",
     forgotSubmit: "Enviar código",
     resetTitle: "Elige una nueva contraseña",
     resetDescription: "Escribe una nueva contraseña para tu cuenta.",
@@ -156,8 +156,8 @@ export const es: Dictionary = {
     bookGateHint: "Primero te registras o inicias sesión, luego llenas el formulario.",
     logout: "Cerrar sesión",
     codeTitle: "Ingresa el código de verificación",
-    codeSent: "Se requiere un código de verificación",
-    codeHint: "Escribe el código de 6 dígitos. Código demo:",
+    codeSent: "Revisa tu correo",
+    codeHint: "Enviamos un código de 6 dígitos a",
     codeLabel: "Código de autenticación",
     codeSubmit: "Verificar y continuar",
     errors: {
@@ -165,6 +165,8 @@ export const es: Dictionary = {
       exists: "Ya existe una cuenta con este correo. Prueba iniciar sesión.",
       credentials: "Correo o contraseña incorrectos.",
       code: "Código incorrecto. Inténtalo de nuevo.",
+      codeExpired: "Ese código expiró. Solicita uno nuevo.",
+      emailSend: "No se pudo enviar el correo de verificación. Inténtalo de nuevo.",
       notfound: "No hay una cuenta con ese correo.",
       mismatch: "Las contraseñas no coinciden.",
     },
@@ -405,11 +407,24 @@ export const es: Dictionary = {
         format: "Impreso",
       },
       englishPack: {
-        name: "Paquete de conversación en inglés",
-        format: "PDF + audio",
+        name: "Speaking Club",
+        format: "Premium · Conversación en vivo",
       },
     },
     order: "Ver detalles",
+    premium: {
+      badge: "Premium",
+      unlocked: "Desbloqueado",
+      lockedTitle: "El Speaking Club es para miembros Premium",
+      lockedGuest:
+        "Escríbele a Martha para unirte — ella te enviará todo lo que necesitas. ¿Ya eres miembro? Inicia sesión para desbloquearlo.",
+      lockedFree:
+        "Tienes el plan gratuito. Escríbele a Martha para unirte al Speaking Club — ella te enviará todo lo que necesitas.",
+      perks: ["Sesiones en vivo cada semana", "Grupos pequeños", "Retroalimentación de Martha"],
+      contactCta: "Contáctanos",
+      loginCta: "Iniciar sesión",
+      joinCta: "Unirme a la próxima sesión",
+    },
     orderMessage: (name: string, format: string) =>
       `¡Hola, Martha! Me gustaría pedir: ${name} (${format}).`,
     back: "Volver a aprender",
@@ -417,6 +432,36 @@ export const es: Dictionary = {
     idealFor: "Ideal para",
     howItWorks: "Cómo pedir",
     orderCta: "Pedir por correo",
+    cards: {
+      eyebrow: "Tarjetas de muestra",
+      title: "Mira lo que incluye",
+      decks: {
+        alphabet: {
+          name: "Abecedario en español",
+          description:
+            "27 tarjetas ilustradas, de abeja a zarigüeya — incluida la Ñ. Toca una tarjeta para verla de cerca.",
+        },
+        body: {
+          name: "Partes del cuerpo en maya tz'utujil",
+          description:
+            "24 tarjetas con imágenes de las partes del cuerpo. Elige un idioma y toca una tarjeta para darle la vuelta y ver los otros dos.",
+        },
+        glyphs: {
+          name: "Glifos mayas",
+          description:
+            "Nombres de idiomas mayas escritos en jeroglíficos, sílaba por sílaba — y el nombre de Martha. Las letras entre paréntesis no se escriben con un glifo.",
+        },
+      },
+      mayanLanguage: "Idioma maya",
+      teacherName: "El nombre de tu maestra",
+      tapToFlip: "Toca para girar",
+      showWordsIn: "Ver palabras en",
+      meaning: "Significado",
+      close: "Cerrar",
+      previous: "Tarjeta anterior",
+      next: "Tarjeta siguiente",
+      cardOf: (n: number, total: number) => `Tarjeta ${n} de ${total}`,
+    },
     details: {
       mayaWorkbook: {
         intro:
@@ -483,23 +528,23 @@ export const es: Dictionary = {
       },
       englishPack: {
         intro:
-          "Un paquete de conversación con lecciones en PDF y audio para practicar inglés hablado y comprensión en casa.",
+          "Un club de conversación en vivo y amigable donde practicas hablar con otros estudiantes — guiado por Martha, con temas reales y retroalimentación al momento.",
         includes: [
-          "Guiones de conversación guiada",
-          "Audio de escucha para cada unidad",
-          "Frases útiles para trabajo y viajes",
-          "Notas de pronunciación y shadowing",
-          "Preguntas de autoevaluación",
+          "Sesiones semanales de conversación en vivo en línea",
+          "Grupos pequeños para que todos hablen",
+          "Temas y frases útiles antes de cada sesión",
+          "Consejos de pronunciación y retroalimentación personal",
+          "Grabaciones y notas de cada sesión para repasar",
         ],
         idealFor: [
-          "Aprendices guatemaltecos que quieren hablar inglés",
+          "Quienes quieren hablar con confianza",
           "Estudiantes que se preparan para entrevistas o viajes",
-          "Quienes buscan práctica de escucha y habla",
+          "Quien busca práctica de conversación constante",
         ],
         steps: [
-          "Escríbeme para pedir el paquete de inglés",
-          "Te envío pago y enlaces de descarga",
-          "Practica con PDF + audio entre clases",
+          "Envía un mensaje para unirte a la próxima sesión",
+          "Martha te envía el horario y el enlace de la reunión",
+          "Únete en vivo, habla y recibe retroalimentación cada semana",
         ],
       },
     },
@@ -541,9 +586,16 @@ export const es: Dictionary = {
       interestOptions: ["Inglés", "Español"],
       message: "Mensaje",
       messagePlaceholder: "Cuéntame qué quieres aprender o preguntar…",
-      submit: "Enviar por correo",
-      hint: "Se abrirá tu correo con el mensaje listo para enviar.",
-      success: "Correo abierto — envía el mensaje para terminar.",
+      submit: "Enviar mensaje",
+      sending: "Enviando…",
+      hint: "Tu mensaje le llega directo a Martha. Ella te responderá por correo.",
+      success: "¡Gracias! Tu mensaje fue enviado — Martha te responderá pronto por correo.",
+      error: "Lo sentimos, no se pudo enviar el mensaje. Inténtalo de nuevo o escribe por WhatsApp.",
+      popupTitle: "¡Mensaje enviado!",
+      popupText:
+        "Gracias por escribir. Tu mensaje fue entregado — Martha se pondrá en contacto contigo por correo.",
+      popupBadge: "Respuesta en menos de 24 horas",
+      popupClose: "Entendido",
       emailIntro: "¡Hola, Martha! Nuevo mensaje del formulario del sitio:",
     },
   },

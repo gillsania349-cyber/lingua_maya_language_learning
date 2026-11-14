@@ -3,7 +3,17 @@ export const ADMIN_PASSWORD = 'admin123'
 
 const ADMIN_SESSION_KEY = 'lingua-maya-admin'
 const ADMIN_PASSWORD_KEY = 'lingua-maya-admin-password'
+const ADMIN_KEY_STORAGE = 'lingua-maya-admin-key'
 const BOOKINGS_KEY = 'lingua-maya-bookings'
+
+/** The password the admin logged in with (this tab only), for server checks. */
+export function getAdminKey() {
+  try {
+    return window.sessionStorage.getItem(ADMIN_KEY_STORAGE) || ''
+  } catch {
+    return ''
+  }
+}
 const MESSAGES_KEY = 'lingua-maya-messages'
 
 export function getAdminPassword() {
@@ -56,7 +66,15 @@ export function adminLogin(email: string, password: string) {
   const ok =
     email.trim().toLowerCase() === ADMIN_EMAIL &&
     password === getAdminPassword()
-  if (ok) window.localStorage.setItem(ADMIN_SESSION_KEY, '1')
+  if (ok) {
+    window.localStorage.setItem(ADMIN_SESSION_KEY, '1')
+    // Kept for this tab only; the server checks it before admin-only actions.
+    try {
+      window.sessionStorage.setItem(ADMIN_KEY_STORAGE, password)
+    } catch {
+      // ignore
+    }
+  }
   return ok
 }
 
