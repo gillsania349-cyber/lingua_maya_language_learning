@@ -21,9 +21,9 @@ type Language = {
 const cefrCodes = ['A1–A2', 'B1–B2', 'C1–C2']
 
 const languages: Language[] = [
-  { id: 'maya', levelCodes: ['L1', 'L2'], intro: { poster: '/images/martha.png', videoSrc: '' } },
-  { id: 'english', levelCodes: cefrCodes, intro: { poster: '/images/martha-english.png', videoSrc: '' } },
   { id: 'spanish', levelCodes: cefrCodes, intro: { poster: '/images/martha-spanish.png', videoSrc: '' } },
+  { id: 'english', levelCodes: cefrCodes, intro: { poster: '/images/martha-english.png', videoSrc: '' } },
+  { id: 'maya', levelCodes: ['L1', 'L2'], intro: { poster: '/images/martha.png', videoSrc: '' } },
 ]
 
 const openDays = [true, true, false, true, true, true, false]
@@ -31,7 +31,7 @@ const openDays = [true, true, false, true, true, true, false]
 export function HeroShowcase() {
   const { t } = useI18n()
   const copy = t.showcase
-  const [activeId, setActiveId] = useState<LanguageId>('maya')
+  const [activeId, setActiveId] = useState<LanguageId>('spanish')
   const active = languages.find((l) => l.id === activeId) ?? languages[0]
   const activeCopy = copy.languages[active.id]
 
@@ -99,7 +99,7 @@ export function HeroShowcase() {
             alt={activeCopy.alt}
             width={1024}
             height={768}
-            priority={active.id === 'maya'}
+            priority={active.id === 'spanish'}
             className="aspect-[4/3] size-full object-cover"
           />
         )}

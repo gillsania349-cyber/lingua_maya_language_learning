@@ -71,27 +71,9 @@ export function MaterialDetail({ id }: { id: MaterialId }) {
             {item.name}
           </h1>
           <p className="mt-2 text-sm opacity-85">{item.format}</p>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed opacity-95">
-            {detail.intro}
-          </p>
         </div>
 
         <div className="space-y-8 px-6 py-8 md:px-10 md:py-10">
-          <section>
-            <h2 className="text-lg font-semibold">{copy.includes}</h2>
-            <ul className="mt-4 space-y-3">
-              {detail.includes.map((line) => (
-                <li
-                  key={line}
-                  className="flex gap-3 rounded-2xl bg-muted px-4 py-3 text-sm leading-relaxed"
-                >
-                  <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
-                  {line}
-                </li>
-              ))}
-            </ul>
-          </section>
-
           {checking ? (
             <div className="grid place-items-center py-10 text-muted-foreground">
               <Loader2 className="size-6 animate-spin" aria-label="Loading" />
@@ -139,21 +121,9 @@ export function MaterialDetail({ id }: { id: MaterialId }) {
             </section>
           ) : (
           <>
-          <section>
-            <h2 className="text-lg font-semibold">{copy.idealFor}</h2>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {detail.idealFor.map((tag) => (
-                <li
-                  key={tag}
-                  className="rounded-full bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground"
-                >
-                  {tag}
-                </li>
-              ))}
-            </ul>
-          </section>
+          <MaterialCards id={id} />
 
-          <section>
+          <section className="border-t border-border pt-8 first:border-t-0 first:pt-0">
             <h2 className="text-lg font-semibold">{copy.howItWorks}</h2>
             <ol className="mt-4 space-y-4">
               {detail.steps.map((step, i) => (
@@ -166,8 +136,6 @@ export function MaterialDetail({ id }: { id: MaterialId }) {
               ))}
             </ol>
           </section>
-
-          <MaterialCards id={id} />
 
           <Link
             href={contactHref}

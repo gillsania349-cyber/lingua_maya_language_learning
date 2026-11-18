@@ -8,7 +8,7 @@ import { saveBooking } from "@/lib/admin"
 import { whatsappLink } from "@/lib/site"
 import type { PublicUser } from "@/lib/auth"
 
-const languageIds = ["maya", "english", "spanish"] as const
+const languageIds = ["spanish", "english", "maya"] as const
 
 const fieldClass =
   "box-border h-12 w-full appearance-none rounded-xl border border-input bg-muted px-4 text-base text-foreground outline-none transition placeholder:text-muted-foreground focus-visible:border-primary focus-visible:bg-background focus-visible:ring-3 focus-visible:ring-primary/25"
@@ -158,7 +158,7 @@ export function BookingForm({
             id="book-language"
             name="language"
             className={fieldClass}
-            defaultValue="maya"
+            defaultValue="spanish"
           >
             {languageIds.map((id) => (
               <option key={id} value={id}>

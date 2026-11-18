@@ -1,8 +1,8 @@
 export const en = {
   meta: {
-    title: "Lingua Maya — Maya, English & Guatemalan Spanish lessons",
+    title: "Lingua Maya — Guatemalan Spanish, English & Maya lessons",
     description:
-      "Learn Maya, English, or Guatemalan Spanish with Martha A. Zelada. Book lessons, order learning materials, and get in touch on WhatsApp.",
+      "Learn Guatemalan Spanish, English, or Maya with Martha A. Zelada. Book lessons, order learning materials, and get in touch on WhatsApp.",
   },
   header: {
     nav: {
@@ -21,9 +21,9 @@ export const en = {
   },
   hero: {
     badge: "Lessons by Martha A. Zelada",
-    titleBefore: "Speak ",
-    titleHighlight: "Maya",
-    titleAfter: ", English & Guatemalan Spanish",
+    titleBefore: "Speak Guatemalan ",
+    titleHighlight: "Spanish",
+    titleAfter: ", English & Maya",
     description:
       "Friendly one-on-one and group lessons, plus learning materials made with care in Guatemala. Book in minutes, learn at your own pace.",
     ctaBook: "Book a free trial",
@@ -78,10 +78,10 @@ export const en = {
     aside: "Free trial first. Deeper plans on WhatsApp.",
     items: [
       {
-        name: "Maya language",
-        tag: "Heritage",
-        text: "Connect with Guatemala’s living Maya heritage. Pronunciation, everyday conversation, and the cultural meaning behind the words.",
-        cta: "Free trial · Maya",
+        name: "Guatemalan Spanish",
+        tag: "Local voice",
+        text: "Real Spanish as it’s spoken in Guatemala: chapín expressions, local vocabulary, and confidence for daily life.",
+        cta: "Free trial · Spanish",
       },
       {
         name: "English",
@@ -90,10 +90,10 @@ export const en = {
         cta: "Free trial · English",
       },
       {
-        name: "Guatemalan Spanish",
-        tag: "Local voice",
-        text: "Real Spanish as it’s spoken in Guatemala: chapín expressions, local vocabulary, and confidence for daily life.",
-        cta: "Free trial · Spanish",
+        name: "Maya language",
+        tag: "Heritage",
+        text: "Connect with Guatemala’s living Maya heritage. Pronunciation, everyday conversation, and the cultural meaning behind the words.",
+        cta: "Free trial · Maya",
       },
     ],
   },
@@ -190,9 +190,9 @@ export const en = {
     nameLabel: "Your name",
     languageLabel: "Language",
     languageOptions: {
-      maya: "Maya",
-      english: "English",
       spanish: "Guatemalan Spanish",
+      english: "English",
+      maya: "Maya",
     },
     formatLabel: "Format",
     formatOptions: { online: "Online", inPerson: "In person" },
@@ -243,7 +243,7 @@ export const en = {
     eyebrow: "Practice hub",
     title: "Quizzes, tasks & assignments",
     description:
-      "Practice between lessons with short quizzes, weekly tasks, and guided assignments made for Maya, English, and Guatemalan Spanish learners.",
+      "Practice between lessons with short quizzes, weekly tasks, and guided assignments made for Guatemalan Spanish, English, and Maya learners.",
     back: "Back to learn",
     taskLabel: "Task",
     assignmentLabel: "Assignment",
@@ -271,7 +271,7 @@ export const en = {
       quizzes: {
         title: "Language quizzes",
         intro:
-          "Try this sample quiz. In class, Martha can assign new quizzes for Maya, English, or Spanish based on your level.",
+          "Try this sample quiz. In class, Martha can assign new quizzes for Spanish, English, or Maya based on your level.",
         items: [],
         note: "Tip: retake the quiz after your next lesson to see how much you improved.",
       },
@@ -282,7 +282,7 @@ export const en = {
         items: [
           {
             title: "Record a 60-second greeting",
-            text: "Say hello, introduce yourself, and share one thing you like — in Maya, English, or Spanish.",
+            text: "Say hello, introduce yourself, and share one thing you like — in Spanish, English, or Maya.",
             meta: "Speaking · 10 min",
           },
           {
@@ -388,7 +388,7 @@ export const en = {
       "Workbooks, flashcards and a Guatemalan woven textile laid out on a table",
     items: {
       mayaWorkbook: { name: "Maya starter workbook", format: "Printed or PDF" },
-      chapinPhrasebook: { name: "Chapín Spanish phrasebook", format: "PDF" },
+      chapinPhrasebook: { name: "Workbooks", format: "PDF" },
       flashcards: { name: "Vocabulary flashcard sets", format: "Printed" },
       englishPack: { name: "Speaking Club", format: "Premium · Live conversation" },
     },
@@ -417,6 +417,16 @@ export const en = {
       eyebrow: "Sample cards",
       title: "Take a look inside",
       decks: {
+        tzutujilAlphabet: {
+          name: "Tz'utujil alphabet",
+          description:
+            "30 illustrated cards for the Tz'utujil alphabet — from a (ajq) to y (yak'aqan), including letters like ch', q' and tz'. Tap a card to see it up close.",
+        },
+        englishAlphabet: {
+          name: "English alphabet",
+          description:
+            "26 illustrated letter cards, from apple to zebra. Tap a card to see it up close.",
+        },
         alphabet: {
           name: "Spanish alphabet",
           description:
@@ -564,7 +574,7 @@ export const en = {
       phonePlaceholder: "+502 0000 0000",
       interest: "Language",
       interestPlaceholder: "Choose a language",
-      interestOptions: ["English", "Spanish"],
+      interestOptions: ["Spanish", "English"],
       message: "Message",
       messagePlaceholder: "Tell me what you would like to learn or ask…",
       submit: "Send message",
@@ -584,7 +594,7 @@ export const en = {
     madeBy: "Made by",
     whatsappFloatLabel: "Chat with Martha on WhatsApp",
     tagline:
-      "Friendly lessons in Maya, English, and Guatemalan Spanish — with materials made with care in Guatemala.",
+      "Friendly lessons in Guatemalan Spanish, English, and Maya — with materials made with care in Guatemala.",
     explore: "Explore",
     contactTitle: "Contact us",
     follow: "Follow",

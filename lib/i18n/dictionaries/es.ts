@@ -2,9 +2,9 @@ import type { Dictionary } from "./en";
 
 export const es: Dictionary = {
   meta: {
-    title: "Lingua Maya — Clases de maya, inglés y español guatemalteco",
+    title: "Lingua Maya — Clases de español guatemalteco, inglés y maya",
     description:
-      "Aprende maya, inglés o español guatemalteco con Martha A. Zelada. Reserva clases, pide materiales de aprendizaje y escríbeme por WhatsApp.",
+      "Aprende español guatemalteco, inglés o maya con Martha A. Zelada. Reserva clases, pide materiales de aprendizaje y escríbeme por WhatsApp.",
   },
   header: {
     nav: {
@@ -24,8 +24,8 @@ export const es: Dictionary = {
   hero: {
     badge: "Clases con Martha A. Zelada",
     titleBefore: "Habla ",
-    titleHighlight: "maya",
-    titleAfter: ", inglés y español guatemalteco",
+    titleHighlight: "español",
+    titleAfter: " guatemalteco, inglés y maya",
     description:
       "Clases individuales y en grupo, con materiales hechos con cariño en Guatemala. Reserva en minutos y aprende a tu propio ritmo.",
     ctaBook: "Reservar clase gratis",
@@ -81,10 +81,10 @@ export const es: Dictionary = {
     aside: "Primero la clase gratis. Los planes más amplios, por WhatsApp.",
     items: [
       {
-        name: "Idioma maya",
-        tag: "Herencia",
-        text: "Conecta con la herencia maya viva de Guatemala. Pronunciación, conversación cotidiana y el significado cultural detrás de las palabras.",
-        cta: "Prueba gratis · Maya",
+        name: "Español guatemalteco",
+        tag: "Voz local",
+        text: "El español real que se habla en Guatemala: expresiones chapinas, vocabulario local y confianza para el día a día.",
+        cta: "Prueba gratis · Español",
       },
       {
         name: "Inglés",
@@ -93,10 +93,10 @@ export const es: Dictionary = {
         cta: "Prueba gratis · Inglés",
       },
       {
-        name: "Español guatemalteco",
-        tag: "Voz local",
-        text: "El español real que se habla en Guatemala: expresiones chapinas, vocabulario local y confianza para el día a día.",
-        cta: "Prueba gratis · Español",
+        name: "Idioma maya",
+        tag: "Herencia",
+        text: "Conecta con la herencia maya viva de Guatemala. Pronunciación, conversación cotidiana y el significado cultural detrás de las palabras.",
+        cta: "Prueba gratis · Maya",
       },
     ],
   },
@@ -250,7 +250,7 @@ export const es: Dictionary = {
     eyebrow: "Centro de práctica",
     title: "Cuestionarios, tareas y trabajos",
     description:
-      "Practica entre clases con quizzes cortos, tareas semanales y asignaciones guiadas para maya, inglés y español guatemalteco.",
+      "Practica entre clases con quizzes cortos, tareas semanales y asignaciones guiadas para español guatemalteco, inglés y maya.",
     back: "Volver a aprender",
     taskLabel: "Tarea",
     assignmentLabel: "Trabajo",
@@ -278,7 +278,7 @@ export const es: Dictionary = {
       quizzes: {
         title: "Cuestionarios de idioma",
         intro:
-          "Prueba este quiz de ejemplo. En clase, Martha puede asignar nuevos quizzes de maya, inglés o español según tu nivel.",
+          "Prueba este quiz de ejemplo. En clase, Martha puede asignar nuevos quizzes de español, inglés o maya según tu nivel.",
         items: [],
         note: "Consejo: vuelve a hacer el quiz después de tu próxima clase para ver tu progreso.",
       },
@@ -289,7 +289,7 @@ export const es: Dictionary = {
         items: [
           {
             title: "Graba un saludo de 60 segundos",
-            text: "Saluda, preséntate y comparte una cosa que te gusta — en maya, inglés o español.",
+            text: "Saluda, preséntate y comparte una cosa que te gusta — en español, inglés o maya.",
             meta: "Habla · 10 min",
           },
           {
@@ -399,7 +399,7 @@ export const es: Dictionary = {
         format: "Impreso o PDF",
       },
       chapinPhrasebook: {
-        name: "Guía de frases en español chapín",
+        name: "Cuadernos de trabajo",
         format: "PDF",
       },
       flashcards: {
@@ -436,6 +436,16 @@ export const es: Dictionary = {
       eyebrow: "Tarjetas de muestra",
       title: "Mira lo que incluye",
       decks: {
+        tzutujilAlphabet: {
+          name: "Abecedario en tz'utujil",
+          description:
+            "30 tarjetas ilustradas del abecedario tz'utujil — de a (ajq) a y (yak'aqan), con letras como ch', q' y tz'. Toca una tarjeta para verla de cerca.",
+        },
+        englishAlphabet: {
+          name: "Abecedario en inglés",
+          description:
+            "26 tarjetas ilustradas, de apple a zebra. Toca una tarjeta para verla de cerca.",
+        },
         alphabet: {
           name: "Abecedario en español",
           description:
@@ -583,7 +593,7 @@ export const es: Dictionary = {
       phonePlaceholder: "+502 0000 0000",
       interest: "Idioma",
       interestPlaceholder: "Elige un idioma",
-      interestOptions: ["Inglés", "Español"],
+      interestOptions: ["Español", "Inglés"],
       message: "Mensaje",
       messagePlaceholder: "Cuéntame qué quieres aprender o preguntar…",
       submit: "Enviar mensaje",
@@ -603,7 +613,7 @@ export const es: Dictionary = {
     madeBy: "Hecho por",
     whatsappFloatLabel: "Escríbele a Martha por WhatsApp",
     tagline:
-      "Clases amables de maya, inglés y español guatemalteco — con materiales hechos con cariño en Guatemala.",
+      "Clases amables de español guatemalteco, inglés y maya — con materiales hechos con cariño en Guatemala.",
     explore: "Explorar",
     contactTitle: "Contáctanos",
     follow: "Sígueme",

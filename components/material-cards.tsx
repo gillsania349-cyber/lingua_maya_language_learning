@@ -5,9 +5,12 @@ import { ChevronLeft, ChevronRight, RotateCw, X } from "lucide-react"
 import { useI18n } from "@/components/i18n-provider"
 import {
   alphabetCards,
+  englishAlphabetCards,
+  tzutujilAlphabetCards,
   bodyCards,
   decksByMaterial,
   glyphCards,
+  type AlphabetCard,
   type BodyCard,
   type DeckId,
 } from "@/lib/flashcards"
@@ -23,7 +26,7 @@ export function MaterialCards({ id }: { id: MaterialId }) {
   const deck = copy.decks[active]
 
   return (
-    <section className="border-t border-border pt-8">
+    <section>
       <p className="text-xs font-semibold uppercase tracking-widest text-primary">
         {copy.eyebrow}
       </p>
@@ -63,8 +66,19 @@ export function MaterialCards({ id }: { id: MaterialId }) {
       </div>
 
       <div className="mt-6">
-        {active === "alphabet" ? (
-          <AlphabetDeck />
+        {active === "alphabet" ||
+        active === "englishAlphabet" ||
+        active === "tzutujilAlphabet" ? (
+          <AlphabetDeck
+            key={active}
+            cards={
+              active === "alphabet"
+                ? alphabetCards
+                : active === "englishAlphabet"
+                  ? englishAlphabetCards
+                  : tzutujilAlphabetCards
+            }
+          />
         ) : active === "body" ? (
           <BodyDeck />
         ) : (
@@ -77,11 +91,20 @@ export function MaterialCards({ id }: { id: MaterialId }) {
 
 /* ---------- Spanish alphabet: tilted card grid + lightbox ---------- */
 
-function AlphabetDeck() {
+/** "Aa" → "A"; Tz'utujil letters like "ch'" or "aa" stay whole. */
+function chipLabel(letter: string) {
+  const isPair =
+    letter.length === 2 &&
+    letter[0] !== letter[1] &&
+    letter[0].toLowerCase() === letter[1].toLowerCase()
+  return isPair ? letter[0] : letter
+}
+
+function AlphabetDeck({ cards }: { cards: AlphabetCard[] }) {
   const { t } = useI18n()
   const copy = t.materials.cards
   const [open, setOpen] = useState<number | null>(null)
-  const total = alphabetCards.length
+  const total = cards.length
 
   const go = useCallback(
     (delta: number) =>
@@ -105,28 +128,28 @@ function AlphabetDeck() {
     }
   }, [open, go])
 
-  const current = open === null ? null : alphabetCards[open]
+  const current = open === null ? null : cards[open]
 
   return (
     <>
       {/* quick letter jump */}
       <div className="-mx-1 flex flex-wrap gap-1.5 px-1">
-        {alphabetCards.map((card, i) => (
+        {cards.map((card, i) => (
           <button
             key={card.letter}
             type="button"
             onClick={() => setOpen(i)}
-            className="grid size-9 place-items-center rounded-xl border border-border text-sm font-semibold transition hover:-translate-y-0.5 hover:border-transparent hover:bg-(--c) hover:text-white focus-visible:bg-(--c) focus-visible:text-white"
+            className="grid h-9 min-w-9 place-items-center rounded-xl border px-2 border-border text-sm font-semibold transition hover:-translate-y-0.5 hover:border-transparent hover:bg-(--c) hover:text-white focus-visible:bg-(--c) focus-visible:text-white"
             style={{ ["--c" as string]: card.color }}
             aria-label={`${card.letter} — ${card.word}`}
           >
-            {card.letter.charAt(0)}
+            {chipLabel(card.letter)}
           </button>
         ))}
       </div>
 
       <ul className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-        {alphabetCards.map((card, i) => (
+        {cards.map((card, i) => (
           <li key={card.letter}>
             <button
               type="button"
@@ -152,7 +175,7 @@ function AlphabetDeck() {
               <div className="mt-2.5 flex items-baseline justify-between gap-2 px-1">
                 <span className="truncate text-sm font-semibold">{card.word}</span>
                 <span className="shrink-0 text-xs text-muted-foreground">
-                  {card.en}
+                  {card.meaning}
                 </span>
               </div>
             </button>
@@ -204,7 +227,7 @@ function AlphabetDeck() {
               <div className="text-center">
                 <p className="text-lg font-semibold">
                   {current.word}{" "}
-                  <span className="font-normal opacity-75">· {current.en}</span>
+                  <span className="font-normal opacity-75">· {current.meaning}</span>
                 </p>
                 <p className="text-xs opacity-60">
                   {copy.cardOf(open + 1, total)}
