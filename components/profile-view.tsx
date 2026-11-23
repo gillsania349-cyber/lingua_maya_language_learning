@@ -15,8 +15,9 @@ import {
 } from "lucide-react"
 import { BookLessonButton, useAuth } from "@/components/auth-provider"
 import { useI18n } from "@/components/i18n-provider"
+import { QuizProgressCard } from "@/components/quiz-progress-card"
 import {
-  listBookingsByEmail,
+  removeExtraTrials,
   type AdminBooking,
 } from "@/lib/admin"
 
@@ -32,7 +33,8 @@ export function ProfileView() {
       setLessons([])
       return
     }
-    setLessons(listBookingsByEmail(user.email))
+    const trial = removeExtraTrials(user.email)
+    setLessons(trial ? [trial] : [])
   }, [user])
 
   if (!ready) {
@@ -185,6 +187,8 @@ export function ProfileView() {
             </ul>
           )}
         </div>
+
+        <QuizProgressCard email={user.email} />
 
         <p className="text-sm text-muted-foreground">{p.hint}</p>
 

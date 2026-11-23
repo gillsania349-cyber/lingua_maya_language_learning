@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
-import { CheckCircle2, Clock, Gift, Send, Video } from "lucide-react"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { CalendarCheck, CheckCircle2, Clock, Gift, Send, Video } from "lucide-react"
 import { DateTimePicker } from "@/components/datetime-picker"
 import { useI18n } from "@/components/i18n-provider"
-import { saveBooking } from "@/lib/admin"
+import { getTrialBooking, saveBooking, type AdminBooking } from "@/lib/admin"
 import { whatsappLink } from "@/lib/site"
 import type { PublicUser } from "@/lib/auth"
 
@@ -31,9 +32,24 @@ export function BookingForm({
   const [submitted, setSubmitted] = useState(false)
   const [bookedTime, setBookedTime] = useState("")
   const [waUrl, setWaUrl] = useState("")
+  // The form only mounts in the browser (inside the booking modal), so reading storage here is safe.
+  const [existing, setExisting] = useState<AdminBooking | null>(() =>
+    user ? getTrialBooking(user.email) : null,
+  )
+
+  useEffect(() => {
+    setExisting(user ? getTrialBooking(user.email) : null)
+  }, [user])
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (user) {
+      const already = getTrialBooking(user.email)
+      if (already) {
+        setExisting(already)
+        return
+      }
+    }
     const data = new FormData(event.currentTarget)
     const language =
       copy.languageOptions[
@@ -53,7 +69,7 @@ export function BookingForm({
     const notes = String(data.get("notes") ?? "").trim()
     if (notes) lines.push(`${m.notes}: ${notes}`)
 
-    saveBooking({
+    const saved = saveBooking({
       name: String(data.get("name") || "").trim(),
       email: user?.email ?? "",
       language: String(language),
@@ -62,6 +78,10 @@ export function BookingForm({
       time,
       notes,
     })
+    if (!saved) {
+      setExisting(user ? getTrialBooking(user.email) : null)
+      return
+    }
 
     setBookedTime(time)
     setWaUrl(whatsappLink(lines.join("\n")))
@@ -104,6 +124,43 @@ export function BookingForm({
           >
             {s.close}
           </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (existing) {
+    const a = copy.alreadyBooked
+    return (
+      <div className="flex flex-col items-center gap-5 py-4 text-center sm:py-6">
+        <div className="grid size-16 place-items-center rounded-full bg-primary/10 text-primary">
+          <CalendarCheck className="size-8" aria-hidden />
+        </div>
+        <div className="max-w-md space-y-3">
+          <h3 className="text-2xl font-semibold tracking-tight">{a.title}</h3>
+          <p className="rounded-2xl bg-primary/8 px-4 py-3 text-sm font-semibold text-foreground sm:text-base">
+            {existing.language} · {existing.time}
+          </p>
+          <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {a.body}
+          </p>
+        </div>
+        <div className="flex w-full max-w-md flex-col gap-3 pt-2">
+          <a
+            href={whatsappLink(a.whatsappMessage)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-whatsapp px-7 py-4 font-semibold text-white transition hover:opacity-90"
+          >
+            {a.whatsapp}
+          </a>
+          <Link
+            href="/profile"
+            onClick={() => onDone?.()}
+            className="inline-flex w-full items-center justify-center rounded-full border border-input bg-muted px-7 py-3.5 text-sm font-semibold transition hover:border-primary/40 hover:bg-background"
+          >
+            {a.profile}
+          </Link>
         </div>
       </div>
     )

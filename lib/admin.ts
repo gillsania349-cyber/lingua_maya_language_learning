@@ -108,9 +108,31 @@ export function listBookingsByEmail(email: string): AdminBooking[] {
   return listBookings().filter((b) => b.email.trim().toLowerCase() === normalized)
 }
 
+/** The free trial this email already booked, if any (one per email). */
+export function getTrialBooking(email: string): AdminBooking | null {
+  return listBookingsByEmail(email).at(-1) ?? null
+}
+
+/**
+ * Keeps only the first trial booked with this email and deletes any extras
+ * (left over from before the one-trial rule). Returns the trial that remains.
+ */
+export function removeExtraTrials(email: string): AdminBooking | null {
+  const trial = getTrialBooking(email)
+  if (!trial) return null
+  const normalized = email.trim().toLowerCase()
+  const kept = listBookings().filter(
+    (b) => b.id === trial.id || b.email.trim().toLowerCase() !== normalized,
+  )
+  if (kept.length !== listBookings().length) writeList(BOOKINGS_KEY, kept)
+  return trial
+}
+
+/** Saves the booking, or returns null if this email already has a trial. */
 export function saveBooking(
   input: Omit<AdminBooking, 'id' | 'createdAt' | 'status'>,
 ) {
+  if (getTrialBooking(input.email)) return null
   const booking: AdminBooking = {
     ...input,
     id: crypto.randomUUID(),

@@ -6,14 +6,20 @@ import {
   ArrowLeft,
   CheckCircle2,
   ClipboardList,
+  Hourglass,
+  Languages,
   ListTodo,
   Sparkles,
   XCircle,
 } from "lucide-react"
 import { useI18n } from "@/components/i18n-provider"
 import type { PracticeSlug } from "@/lib/practice"
+import { placementQuizzes } from "@/lib/placement"
+import { PlacementQuiz } from "@/components/placement-quiz"
 
 const icons = {
+  english: Sparkles,
+  spanish: Languages,
   quizzes: Sparkles,
   tasks: ListTodo,
   assignments: ClipboardList,
@@ -52,6 +58,23 @@ export function PracticeDetail({ slug }: { slug: PracticeSlug }) {
         </div>
 
         <div className="space-y-8 px-6 py-8 md:px-10 md:py-10">
+          {(slug === "english" || slug === "spanish") &&
+          placementQuizzes[slug].length > 0 ? (
+            <PlacementQuiz language={slug} />
+          ) : null}
+
+          {(slug === "english" || slug === "spanish") &&
+          placementQuizzes[slug].length === 0 ? (
+            <div className="flex flex-col items-start gap-4 rounded-2xl border border-dashed border-primary/30 bg-muted/50 p-6">
+              <span className="grid size-11 place-items-center rounded-2xl bg-primary/10 text-primary">
+                <Hourglass className="size-5" aria-hidden="true" />
+              </span>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {copy.comingSoon}
+              </p>
+            </div>
+          ) : null}
+
           {slug === "quizzes" ? <QuizPanel /> : null}
 
           {slug === "tasks" ? (

@@ -5,12 +5,11 @@ import Link from "next/link"
 import {
   ArrowUpRight,
   BookOpen,
-  ClipboardList,
   FileText,
+  Languages,
   Lock,
   MessagesSquare,
   Layers,
-  ListTodo,
   Sparkles,
 } from "lucide-react"
 import { SectionHeading } from "@/components/languages"
@@ -20,22 +19,16 @@ import { isPremiumMaterial } from "@/lib/materials"
 
 const practiceCards = [
   {
-    id: "quizzes" as const,
-    slug: "quizzes",
+    id: "english" as const,
+    slug: "english",
     icon: Sparkles,
     accent: "from-primary/18 via-secondary/40 to-background",
   },
   {
-    id: "tasks" as const,
-    slug: "tasks",
-    icon: ListTodo,
+    id: "spanish" as const,
+    slug: "spanish",
+    icon: Languages,
     accent: "from-secondary/60 via-accent to-background",
-  },
-  {
-    id: "assignments" as const,
-    slug: "assignments",
-    icon: ClipboardList,
-    accent: "from-accent via-primary/10 to-background",
   },
 ]
 
@@ -81,7 +74,7 @@ export function Learn() {
             </p>
           </div>
 
-          <ul className="grid gap-4 md:grid-cols-3">
+          <ul className="grid gap-4 md:grid-cols-2">
             {practiceCards.map(({ id, slug, icon: Icon, accent }, index) => {
               const item = practice.items[id]
               return (

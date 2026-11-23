@@ -1,4 +1,4 @@
-export const practiceSlugs = ['quizzes', 'tasks', 'assignments'] as const
+export const practiceSlugs = ['english', 'spanish', 'quizzes', 'tasks', 'assignments'] as const
 
 export type PracticeSlug = (typeof practiceSlugs)[number]
 
